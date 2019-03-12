@@ -36,8 +36,13 @@ public class ProjectService {
 	 * @return
 	 */
 	public Manager promoteToManager(int employeeId, long bonus) {
+		em.getTransaction().begin();
 		Employee employee = em.find(Employee.class, employeeId);
 		Manager man = new Manager(employee, bonus);	
+		em.remove(employee);
+		em.persist(man);
+		em.getTransaction().commit();
+		
 		return man;
 	}
 	
@@ -51,7 +56,10 @@ public class ProjectService {
 	 * @return el proyecto creado
 	 */
 	public Project createBigDataProject(String name, Department d, Manager m, BigDecimal budget) {
+		em.getTransaction().begin();
 		Project project = new Project(name, d, m,budget,LocalDate.now(),LocalDate.now().plusYears(3),"BigData");
+		em.persist(project);
+		em.getTransaction().commit();
 		return project;
 	}
 	
@@ -63,11 +71,14 @@ public class ProjectService {
 	 * @param endId identificador final de empleados. Se asume que start id < endId
 	 */
 	public void assignTeam (Project p, int startId, int endId) {
+		em.getTransaction().begin();
 		for(int i = startId; i <= endId; i++) {
 			if(em.find(Employee.class, i) != null) {
 				p.addEmployee(em.find(Employee.class, i));
 			}
 		}
+		em.merge(p);
+		em.getTransaction().commit();
 	}
 	
 	/** TODO
@@ -77,19 +88,22 @@ public class ProjectService {
 	 * @return total de horas generadas para el proyecto
 	 */
 	public int assignInitialHours (int projectId) {
+		em.getTransaction().begin();
 		int totalHours = 0;
-		//TODO Buscar proyecto
-		Project p = null;
+		Project p = em.find(Project.class, projectId);
 		LocalDate start = p.getStartDate();
 		while (start.isBefore(p.getEndDate())) {
 			for (Employee e: p.getEmployees()) {
 				int hours = new Random().nextInt(165) + 10; 
 				totalHours += hours;
 				//TODO Agregar las horas del empleado al proyecto
+				p.addHours(e, start.getMonthValue(), start.getYear(), totalHours);
 			}
 			start = start.plusMonths(1);
 		}
 		// TODO guardar resultados	
+		em.merge(p); // No sé si es merge o persist
+		em.getTransaction().commit();
 		return totalHours;
 	}
 	

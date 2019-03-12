@@ -26,38 +26,35 @@ public class P2Main {
 		
 		
 		/* Comprobar funcionamiento */
-		Employee e = em.find(Employee.class, 222222);
-		e.print();
-		
-		Employee newEmployee = new Employee(1, "Edgar", "Cood",
-				LocalDate.of(1923,8,19), LocalDate.now(), Employee.Gender.M);	
-		em.persist(newEmployee);
-		e = em.find(Employee.class,1);
-		e.print();
-		em.remove(e);
+//		Employee e = em.find(Employee.class, 222222);
+//		e.print();
+//		
+//		Employee newEmployee = new Employee(1, "Edgar", "Cood",
+//				LocalDate.of(1923,8,19), LocalDate.now(), Employee.Gender.M);	
+//		em.persist(newEmployee);
+//		e = em.find(Employee.class,1);
+//		e.print();
+//		em.remove(e);
+//		em.getTransaction().commit();
 		
 		// Ejercicio 2.1
-		Department proyDepartment = service.getDepartmentById("d005"); // a)
-		Employee aux = em.find(Employee.class,20001);
-		Manager projectManager = service.promoteToManager(20001, 1000L); // b)
-		projectManager.print();
-		em.remove(aux);
-		em.persist(projectManager);
-		
+//		Department proyDepartment = service.getDepartmentById("d005"); // a)
+//		Manager projectManager = service.promoteToManager(10003, 1000L); // b)
+//		projectManager.print();
+	
 		
 		//Ejercicio 2.2
-		Project acmeProject = 
-				service.createBigDataProject("Persistence Layer",proyDepartment,projectManager,new BigDecimal(1500000.99));
-		em.persist(acmeProject);
+//		Project acmeProject = 
+//				service.createBigDataProject("Persistence Layer",proj,man,new BigDecimal(1500000.99));
+		
+		// Bypass para no ir tocando la bbdd. Borrar cuando todo esté terminado
+		Project acmeProject = em.find(Project.class, 20);
 		
 		
 		//Ejercicio 2.3
-		service.assignTeam(acmeProject,10001,10005);
-		em.getTransaction().commit();
-		
-		/*
+		service.assignTeam(acmeProject,10007,10010);	
 		int totalHours = service.assignInitialHours(acmeProject.getId());
-		System.out.println("Total project hours: " + totalHours);*/
+//		System.out.println("Total project hours: " + totalHours);
 		
 		/*
 		 * Ejercicio 3. Prueba de consultas

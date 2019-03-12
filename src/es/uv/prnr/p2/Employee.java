@@ -39,6 +39,7 @@ public class Employee {
 	private List<Salary> salaries = new ArrayList();
 	
 	//TODO Relacion bidireccional con Project
+	// RODIEL ESTA ES LA CLASE EMPLOYEE
 	@ManyToMany(mappedBy="team")
 	private List<Project> assignedTo = new ArrayList();
 

@@ -72,12 +72,10 @@ public class Project  {
 	@Column(name="area")
 	private String area;
 	
-	//TODO Relacion * a 1 con Project
 	@ManyToOne
 	@JoinColumn(name="fk_manager")
 	private Manager manager;
 	
-	//TODO relacion * a * utilizando una tabla intermedia
 	@ManyToMany
 	@JoinTable(
 		name="project_team",
@@ -88,7 +86,6 @@ public class Project  {
 		)
 	private Set<Employee> team = new HashSet<Employee>(0);
 	
-	//TODO Relacion 1 a * con la clase ProjectHours
 	@OneToMany(fetch=FetchType.LAZY)
 	@JoinColumn(name="fk_employee")
 	private List<ProjectHours> hours = new ArrayList<ProjectHours>();
@@ -112,7 +109,7 @@ public class Project  {
 	 * @param e
 	 */
 	public void addEmployee(Employee e) {
-		this.team.add(e);
+		this.team.add(e);	
 	}
 	
 	/**
@@ -123,7 +120,8 @@ public class Project  {
 	 * @param hours
 	 */
 	public void addHours(Employee e, int month, int year, int hours) {
-		//TODO Codigo a�adir las horas del empleado
+		ProjectHours ph = new ProjectHours(month, year, hours, e, this);
+		this.hours.add(ph);
 	}
 
 	public int getId() {
@@ -197,6 +195,8 @@ public class Project  {
 		System.out.print("Managed by ");
 		this.manager.print();
 		System.out.println("Project Team");
+		System.out.println(this.team.toString());
+		
 	}
 
 }
