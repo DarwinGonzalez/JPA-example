@@ -38,9 +38,7 @@ public class Employee {
 	@JoinColumn(name="emp_no", updatable=false, referencedColumnName="emp_no")
 	private List<Salary> salaries = new ArrayList();
 	
-	//TODO Relacion bidireccional con Project
-	// RODIEL ESTA ES LA CLASE EMPLOYEE
-	@ManyToMany(mappedBy="team")
+	@ManyToMany(mappedBy="team", fetch=FetchType.LAZY)
 	private List<Project> assignedTo = new ArrayList();
 
 	public Employee(){

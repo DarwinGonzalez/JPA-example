@@ -18,7 +18,7 @@ public class ProjectService {
 		this.em = emf.createEntityManager();
 	}
 	
-	/** TODO
+	/**
 	 * Busca un departamento
 	 * @param id identificador del departamento	
 	 * @return entidad con el deparamenteo encontrado
@@ -27,7 +27,7 @@ public class ProjectService {
 		return em.find(Department.class, id);
 	}
 	
-	/** TODO
+	/**
 	 * Asciende a un empleado a manager. Utilizar una estrateg�a de herencia adecuada
 	 * en employee. Tened en cuenta que NO puede haber dos entidades con el mismo id
 	 * por lo que habr� que eliminar el empleado original en algun momento.
@@ -46,7 +46,7 @@ public class ProjectService {
 		return man;
 	}
 	
-	/** TODO
+	/**
 	 * Crea un nuevo proyecto en el area de Big Data que comienza en la fecha actual y que finaliza
 	 * en 3 a�os.
 	 * @param name 
@@ -63,7 +63,7 @@ public class ProjectService {
 		return project;
 	}
 	
-	/**TODO
+	/**
 	 * Crea un equipo de proyecto. Se debera implementa el m�todo addEmployee de 
 	 * Project para incluir los empleados
 	 * @param p proyecto al cual asignar el equipo
@@ -81,7 +81,7 @@ public class ProjectService {
 		em.getTransaction().commit();
 	}
 	
-	/** TODO
+	/** 
 	 * Genera un conjunto de horas inicial para cada empleado. El m�todo asigna para cada
 	 * mes de duraci�n del proyecto, un n�mero entre 10-165 de horas a cada empleado.
 	 * @param projectId
@@ -96,18 +96,17 @@ public class ProjectService {
 			for (Employee e: p.getEmployees()) {
 				int hours = new Random().nextInt(165) + 10; 
 				totalHours += hours;
-				//TODO Agregar las horas del empleado al proyecto
-				p.addHours(e, start.getMonthValue(), start.getYear(), totalHours);
+				p.addHours(e, start.getMonthValue(), start.getYear(), hours);			
 			}
 			start = start.plusMonths(1);
 		}
-		// TODO guardar resultados	
-		em.merge(p); // No sé si es merge o persist
+
+		em.persist(p);
 		em.getTransaction().commit();
 		return totalHours;
 	}
 	
-	/**TODO
+	/**
 	 * Busca si un empleado se encuentra asignado en el proyecto utilizando la
 	 * namedQuery Project.findEmployee
 	 * @param projectId
@@ -116,10 +115,20 @@ public class ProjectService {
 	 * @return cierto si se encuentra asignado al proyecto
 	 */
 	public boolean employeeInProject (int projectId, String firstName, String lastName){
-		return false;
+		Query consulta= em.createNamedQuery("Project.findEmployee", Integer.class);
+		consulta.setParameter("idProyecto", projectId);
+		consulta.setParameter("nombre", firstName);
+		consulta.setParameter("apellido", lastName);
+		@SuppressWarnings("unchecked")
+		List<Integer> lista= consulta.getResultList();
+		if (lista.size() == 0) {
+			return false;
+		} else {
+			return true;			
+		}
 	}
 	
-	/**TODO
+	/**
 	 * Devuelve los meses con mayor n�mero de horas de un a�o determinado
 	 * utilizando la namedQuery Project.getTopMonths
 	 * @param projectId
@@ -128,10 +137,15 @@ public class ProjectService {
 	 * @return una lista de objetos mes,hora ordenados de mayor a menor
 	 */
 	public List getTopHourMonths(int projectId, int year, int rank) {
-		return null;
+//		Query consulta= em.createNamedQuery("Project.getTopMonths");
+//		consulta.setParameter("idProyecto", projectId);
+//		consulta.setParameter("año", year);
+//		consulta.setMaxResults(rank);
+
+		return  em.createNamedQuery("Project.getTopMonths").setParameter("idProyecto", projectId).setParameter("año", year).setMaxResults(rank).getResultList();
 	}
 	
-	/**TODO
+	/**
 	 * Devuelve para cada par mes-a�o el presupuesto teniendo en cuenta el 
 	 * coste/hora de los empleados asociado utilizando la namedQuery Project.getMonthlyBudget
 	 * que realiza una consulta nativa
@@ -139,7 +153,8 @@ public class ProjectService {
 	 * @return una colecci�n de objetos MonthlyBudget
 	 */
 	public List<MonthlyBudget> getMonthlyBudget (int projectId){
-		return null;
+		return em.createNamedQuery("Project.getMonthlyBudget", MonthlyBudget.class).setParameter("idProyecto", projectId)
+				.getResultList();
 	}
 	
 }

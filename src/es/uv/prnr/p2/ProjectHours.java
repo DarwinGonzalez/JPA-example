@@ -2,7 +2,6 @@ package es.uv.prnr.p2;
 
 import javax.persistence.*;
 
-//TODO Anotaciones JPA necesarias
 @Entity
 @Table(name="monthly_hours")
 public class ProjectHours {
@@ -19,12 +18,10 @@ public class ProjectHours {
 	@Column(name="hours", columnDefinition="UNSIGNED INT(3)")
 	int hours;
 
-	//TODO Relacion * a 1 con Employee
 	@ManyToOne
 	@JoinColumn(name="fk_employee")
 	Employee employee;
 
-	//TODO Relacion * a 1 con Project
 	@ManyToOne
 	@JoinColumn(name="fk_project")
 	Project project;

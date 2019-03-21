@@ -45,7 +45,7 @@ public class P2Main {
 		
 		//Ejercicio 2.2
 //		Project acmeProject = 
-//				service.createBigDataProject("Persistence Layer",proj,man,new BigDecimal(1500000.99));
+//				service.createBigDataProject("Persistence Layer",proyDepartment, projectManager, new BigDecimal(1500000.99));
 		
 		// Bypass para no ir tocando la bbdd. Borrar cuando todo esté terminado
 		Project acmeProject = em.find(Project.class, 20);
@@ -54,11 +54,11 @@ public class P2Main {
 		//Ejercicio 2.3
 		service.assignTeam(acmeProject,10007,10010);	
 		int totalHours = service.assignInitialHours(acmeProject.getId());
-//		System.out.println("Total project hours: " + totalHours);
+		System.out.println("Total project hours: " + totalHours);
 		
 		/*
 		 * Ejercicio 3. Prueba de consultas
-		 *
+		 */
 		
 		if(service.employeeInProject(acmeProject.getId(), "Parto", "Bamford"))
 			System.out.println("Parto Bamford assigned to project");
@@ -68,12 +68,11 @@ public class P2Main {
 		List<Object[]>results = service.getTopHourMonths(acmeProject.getId(), 2019, 3);
 		for(Object[] result : results) {
 			System.out.println("Month " + result[0] + " Hours " + result[1]);
-		}
-		
+		}		
 		
 		List<MonthlyBudget> monthBudgets = service.getMonthlyBudget(acmeProject.getId());
 		for(MonthlyBudget budget : monthBudgets) {
-			System.out.println (budget.getMonth()+"-"+budget.getYear()+" : "+budget.getAmount()+"�");
+			System.out.println (budget.getMonth()+"-"+budget.getYear()+" : "+budget.getAmount()+"€");
 		}
 		
 		/* Eliminamos la informaci�n creada *

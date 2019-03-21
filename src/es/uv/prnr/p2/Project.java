@@ -8,41 +8,29 @@ import java.util.List;
 import java.util.Set;
 import javax.persistence.*;
 
-/*
+
 //TODO JPQL de Ejercicio3 employeeInProject 
-@NamedQuery(
-			name="Project.findEmployee",
-			query = ""
-			)
+
+@NamedQuery(name = "Project.findEmployee", 
+			query = "select e.id from Employee e inner join e.assignedTo aT where e.firstName like :nombre and e.last_name like :apellido and aT.id = :idProyecto")
 
 //TODO JPQL de Ejercicio3 getTopHoursMonth
 @NamedQuery(
 			name="Project.getTopMonths",
-			query=""
+			query="select ph.month, max(ph.hours) as top from ProjectHours ph WHERE ph.year = :año and ph.project.id = :idProyecto group by ph.month order by top"
 )
 
-//TODO Consulta SQL para getMonthly Budget. Se recomienda encarecidamente testearla con Workbench
-//antes de incluirla aqu�
-@NamedNativeQuery(
-		name="Project.getMonthlyBudget",
-		query = "",
-		resultSetMapping = "MonthBudgetMapping"
-)
-*/
+@NamedNativeQuery(name = "Project.getMonthlyBudget", query = "select mh.year, mh.month, sum(round(((s.salary/1650)*mh.hours),0)) as amount from monthly_hours mh "
+		+ " inner join employees e on e.emp_no = mh.fk_employee"
+		+ " inner join salaries s on s.emp_no = mh.fk_employee and s.to_date = '9999-01-01'"
+		+ " where mh.fk_project = :idProyecto" + " group by mh.month, mh.year"
+		+ " order by mh.year, mh.month", resultSetMapping = "MonthBudgetMapping")
 
-//TODO Mapeo del ResultSet para la consulta anterior
-/*@SqlResultSetMapping(
-		name="MonthBudgetMapping",
-		classes = {
-			@ConstructorResult(
-				targetClass=,
-				columns= {
-				}
-			)	
-	}
-)*/
+// Mapeo del ResultSet para la consulta anterior
+@SqlResultSetMapping(name = "MonthBudgetMapping", classes = {
+		@ConstructorResult(targetClass = MonthlyBudget.class, columns = { @ColumnResult(name = "year"),
+				@ColumnResult(name = "month"), @ColumnResult(name = "amount", type = Float.class) }) })
 
-//TODO Anotaciones JPA necesarias
 @Entity
 @Table(name="project")
 public class Project  {
@@ -54,7 +42,7 @@ public class Project  {
 			nullable = false, length = 45)
 	private String name;
 	
-	//TODO Relaci�n * a 1 con Department
+
 	@ManyToOne
 	@JoinColumn(name="fk_department")
 	private Department department;
@@ -86,8 +74,10 @@ public class Project  {
 		)
 	private Set<Employee> team = new HashSet<Employee>(0);
 	
-	@OneToMany(fetch=FetchType.LAZY)
-	@JoinColumn(name="fk_employee")
+//	@OneToMany(fetch=FetchType.LAZY)
+//	@JoinColumn(name="fk_employee")
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+	@JoinColumn(name = "fk_project", updatable = false)
 	private List<ProjectHours> hours = new ArrayList<ProjectHours>();
 	
 	
